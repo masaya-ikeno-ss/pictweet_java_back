@@ -1,9 +1,11 @@
 package in.tech_camp.pictweet.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,26 +41,17 @@ public class TweetController {
         List<TweetEntity> tweets = tweetRepository.findAll();
         return tweets;
   }
-
-  @GetMapping("/tweets/new")
-  public String showTweetNew(Model model){
-    model.addAttribute("tweetForm", new TweetForm());
-    return "tweets/new";
-  }
   
-  @PostMapping("/tweets")
-  public String createTweet(@ModelAttribute("tweetForm") @Validated(ValidationOrder.class) TweetForm tweetForm,
+  @PostMapping("/")
+  public ResponseEntity<?> createTweet(@RequestBody @Validated(ValidationOrder.class) TweetForm tweetForm,
                             BindingResult result, 
-                            @AuthenticationPrincipal CustomUserDetail currentUser,
-                            Model model) {
+                            @AuthenticationPrincipal CustomUserDetail currentUser) {
 
     if (result.hasErrors()) {
       List<String> errorMessages = result.getAllErrors().stream()
               .map(DefaultMessageSourceResolvable::getDefaultMessage)
               .collect(Collectors.toList());
-      model.addAttribute("errorMessages", errorMessages);
-      model.addAttribute("tweetForm", tweetForm);
-      return "tweets/new";
+      return ResponseEntity.badRequest().body(Map.of("messages", errorMessages));
     }
 
     TweetEntity tweet = new TweetEntity();
@@ -67,12 +61,11 @@ public class TweetController {
       
     try {
       tweetRepository.insert(tweet);
+      return ResponseEntity.ok().body(tweet);
     } catch (Exception e) {
       System.out.println("エラー：" + e);
-      return "redirect:/";
+      return ResponseEntity.internalServerError().body(Map.of("messages", List.of("Internal Server Error")));
     }
-
-    return "redirect:/";
   }
 
   @PostMapping("/tweets/{tweetId}/delete")
