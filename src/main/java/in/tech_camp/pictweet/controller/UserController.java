@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import in.tech_camp.pictweet.entity.TweetEntity;
@@ -67,19 +66,6 @@ public class UserController {
       System.out.println("エラー：" + e);
       return ResponseEntity.internalServerError().body(Map.of("message", List.of("Internal Server Error")));
     }
-  }
-
-  @GetMapping("/users/login")
-  public String showLogin(){
-      return "users/login";
-  }
-
-  @GetMapping("/login")
-  public String showLoginWithError(@RequestParam(value = "error") String error, Model model) {
-    if (error != null) {
-      model.addAttribute("loginError", "Invalid email or password.");
-    }
-    return "users/login";
   }
 
   @GetMapping("/users/{userId}")
