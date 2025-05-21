@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,9 +36,8 @@ public class UserController {
 
   @PostMapping("/")
   public ResponseEntity<?> createUser(
-    @ModelAttribute("userForm") @Validated(ValidationOrder.class) UserForm userForm, 
-    BindingResult result, 
-    Model model) {
+    @RequestBody @Validated(ValidationOrder.class) UserForm userForm, 
+    BindingResult result) {
     userForm.validatePasswordConfirmation(result);
     if (userRepository.existsByEmail(userForm.getEmail())) {
       result.rejectValue("email", "null", "Email already exists");
@@ -48,7 +48,7 @@ public class UserController {
               .map(DefaultMessageSourceResolvable::getDefaultMessage)
               .collect(Collectors.toList());
 
-      return ResponseEntity.badRequest().body(Map.of("message", errorMessages));
+      return ResponseEntity.badRequest().body(Map.of("messages", errorMessages));
     }
 
     UserEntity userEntity = new UserEntity();
@@ -64,7 +64,7 @@ public class UserController {
       ));
     } catch (Exception e) {
       System.out.println("エラー：" + e);
-      return ResponseEntity.internalServerError().body(Map.of("message", List.of("Internal Server Error")));
+      return ResponseEntity.internalServerError().body(Map.of("messages", List.of("Internal Server Error")));
     }
   }
 
