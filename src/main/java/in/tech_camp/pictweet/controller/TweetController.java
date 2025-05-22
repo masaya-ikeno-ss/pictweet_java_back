@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import in.tech_camp.pictweet.custom_user.CustomUserDetail;
 import in.tech_camp.pictweet.entity.TweetEntity;
-import in.tech_camp.pictweet.form.CommentForm;
 import in.tech_camp.pictweet.form.SearchForm;
 import in.tech_camp.pictweet.form.TweetForm;
 import in.tech_camp.pictweet.repository.TweetRepository;
@@ -123,14 +122,14 @@ public class TweetController {
     return "redirect:/";
   }
 
-  @GetMapping("/tweets/{tweetId}")
-  public String showTweetDetail(@PathVariable("tweetId") Integer tweetId, Model model) {
+  @GetMapping("/{tweetId}")
+  public ResponseEntity<TweetEntity> showTweetDetail(@PathVariable("tweetId") Integer tweetId) {
       TweetEntity tweet = tweetRepository.findById(tweetId);
-      CommentForm commentForm = new CommentForm();
-      model.addAttribute("tweet", tweet);
-      model.addAttribute("commentForm", commentForm);
-      model.addAttribute("comments",tweet.getComments());
-      return "tweets/detail";
+
+      if (tweet == null) {
+        return ResponseEntity.notFound().build();
+      }
+      return ResponseEntity.ok().body(tweet);
   }
 
   @GetMapping("/tweets/search")

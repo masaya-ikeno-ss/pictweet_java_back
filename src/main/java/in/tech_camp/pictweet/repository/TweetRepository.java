@@ -36,7 +36,7 @@ public interface TweetRepository {
   @Results(value = {
     @Result(property = "id", column = "id"),
     @Result(property = "user", column = "user_id",
-            one = @One(select = "in.tech_camp.pictweet.repository.UserRepository.findById")),
+            one = @One(select = "in.tech_camp.pictweet.repository.UserRepository.findUserById")),
     @Result(property = "comments", column = "id", 
             many = @Many(select = "in.tech_camp.pictweet.repository.CommentRepository.findByTweetId"))
   })
