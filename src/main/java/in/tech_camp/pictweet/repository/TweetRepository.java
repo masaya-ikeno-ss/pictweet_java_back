@@ -42,6 +42,9 @@ public interface TweetRepository {
   })
   TweetEntity findById(Integer id);
 
+  @Select("SELECT * FROM tweets WHERE id = #{id}")
+  TweetEntity findTweetById(Integer id);
+
   @Update("UPDATE tweets SET text = #{text}, image = #{image} WHERE id = #{id}")
   void update(TweetEntity tweet);
 
