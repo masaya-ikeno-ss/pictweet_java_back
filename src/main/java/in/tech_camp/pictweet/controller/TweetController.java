@@ -78,7 +78,7 @@ public class TweetController {
     }
   }
 
-  @PostMapping("/tweets/{tweetId}/update")
+  @PostMapping("/{tweetId}/update")
   public ResponseEntity<?> updateTweet(@RequestBody @Validated(ValidationOrder.class) TweetForm tweetForm,
                             BindingResult result,
                             @PathVariable("tweetId") Integer tweetId
