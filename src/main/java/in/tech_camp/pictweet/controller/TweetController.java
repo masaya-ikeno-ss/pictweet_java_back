@@ -67,15 +67,15 @@ public class TweetController {
     }
   }
 
-  @PostMapping("/tweets/{tweetId}/delete")
-  public String deleteTweet(@PathVariable("tweetId") Integer tweetId) {
+  @PostMapping("/{tweetId}/delete")
+  public ResponseEntity<?> deleteTweet(@PathVariable("tweetId") Integer tweetId) {
     try {
       tweetRepository.deleteById(tweetId);
+      return ResponseEntity.ok().body("");
     } catch (Exception e) {
       System.out.println("エラー：" + e);
-      return "redirect:/";
+      return ResponseEntity.internalServerError().body(Map.of("messages", List.of("Internal Server Error")));
     }
-    return "redirect:/";
   }
 
   @GetMapping("/tweets/{tweetId}/edit")
