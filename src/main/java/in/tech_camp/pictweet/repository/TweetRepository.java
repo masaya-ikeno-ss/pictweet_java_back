@@ -59,7 +59,7 @@ public interface TweetRepository {
   @Select("SELECT * FROM tweets WHERE text LIKE CONCAT('%', #{text}, '%')")
   @Results(value = {
     @Result(property = "user", column = "user_id",
-            one = @One(select = "in.tech_camp.pictweet.repository.UserRepository.findById"))
+            one = @One(select = "in.tech_camp.pictweet.repository.UserRepository.findUserById"))
   })
   List<TweetEntity> findByTextContaining(String text);
 }

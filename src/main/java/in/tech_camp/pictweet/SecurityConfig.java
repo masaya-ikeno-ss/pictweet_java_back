@@ -37,8 +37,8 @@ public class SecurityConfig {
                 
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         //ここに記述されたGETリクエストは許可されます（ログイン不要です)
-                        .requestMatchers(HttpMethod.GET, "/css/**", "/images/**","/tweets/search","/error").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/tweets/", "/api/tweets/{id:[0-9]+}", "/api/users/{id:[0-9]+}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/css/**", "/images/**", "/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/tweets/", "/api/tweets/{id:[0-9]+}", "/api/users/{id:[0-9]+}", "/api/tweets/search").permitAll()
                         //ここに記述されたPOSTリクエストは許可されます(ログイン不要です)
                         .requestMatchers(HttpMethod.POST, "/api/users/", "/api/login").permitAll()
                         .anyRequest().authenticated())
