@@ -78,34 +78,17 @@ public class TweetController {
     }
   }
 
-  @GetMapping("/tweets/{tweetId}/edit")
-  public String editTweet(@PathVariable("tweetId") Integer tweetId, Model model) {
-    TweetEntity tweet = tweetRepository.findById(tweetId);
-
-    TweetForm tweetForm = new TweetForm();
-    tweetForm.setText(tweet.getText());
-    tweetForm.setImage(tweet.getImage());
-
-    model.addAttribute("tweetForm", tweetForm);
-    model.addAttribute("tweetId", tweetId);
-    return "tweets/edit";
-  }
-
   @PostMapping("/tweets/{tweetId}/update")
-  public String updateTweet(@ModelAttribute("tweetForm") @Validated(ValidationOrder.class) TweetForm tweetForm,
+  public ResponseEntity<?> updateTweet(@RequestBody @Validated(ValidationOrder.class) TweetForm tweetForm,
                             BindingResult result,
-                            @PathVariable("tweetId") Integer tweetId,
-                            Model model) {
+                            @PathVariable("tweetId") Integer tweetId
+                            ) {
 
     if (result.hasErrors()) {
       List<String> errorMessages = result.getAllErrors().stream()
               .map(DefaultMessageSourceResolvable::getDefaultMessage)
               .collect(Collectors.toList());
-      model.addAttribute("errorMessages", errorMessages);
-
-      model.addAttribute("tweetForm", tweetForm);
-      model.addAttribute("tweetId", tweetId);
-      return "tweets/edit";
+      return ResponseEntity.badRequest().body(Map.of("messages", errorMessages));
     }
 
     TweetEntity tweet = tweetRepository.findById(tweetId);
@@ -114,12 +97,11 @@ public class TweetController {
 
     try {
       tweetRepository.update(tweet);
+      return ResponseEntity.ok(tweet);
     } catch (Exception e) {
       System.out.println("エラー：" + e);
-      return "redirect:/";
+      return ResponseEntity.internalServerError().body(Map.of("messages","Internal Server Error"));
     }
-
-    return "redirect:/";
   }
 
   @GetMapping("/{tweetId}")
