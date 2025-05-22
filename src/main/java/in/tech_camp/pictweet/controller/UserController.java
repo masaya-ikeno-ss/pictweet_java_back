@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import in.tech_camp.pictweet.entity.TweetEntity;
 import in.tech_camp.pictweet.entity.UserEntity;
 import in.tech_camp.pictweet.form.UserForm;
 import in.tech_camp.pictweet.repository.UserRepository;
@@ -67,13 +65,13 @@ public class UserController {
     }
   }
 
-  @GetMapping("/users/{userId}")
-  public String showMypage(@PathVariable("userId") Integer userId, Model model) {
+  @GetMapping("/{userId}")
+  public ResponseEntity<UserEntity> showMypage(@PathVariable("userId") Integer userId) {
     UserEntity user = userRepository.findById(userId);
-    List<TweetEntity> tweets = user.getTweets();
-
-    model.addAttribute("nickname", user.getNickname());
-    model.addAttribute("tweets", tweets);
-    return "users/mypage";
+    
+    if (user == null) {
+      return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok().body(user);
   }
 }
